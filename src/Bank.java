@@ -52,22 +52,22 @@ public class Bank implements Runnable{
     }
 
     public boolean withdrawFromDepositAccount(long cash){
-        for(BankAccount bankAccount : bankAccounts){
-            if(bankAccount instanceof DepositAccount){
-                return bankAccount.withdraw(cash);
-            }
-        }return false;
+        return bankAccounts.stream().filter(DepositAccount.class::isInstance)
+                        .findFirst()
+                        .map((bankAccount) -> {
+                            return bankAccount.withdraw(cash);
+                        })
+                        .orElseThrow(IllegalArgumentException::new);
     }
     public void setAutoDepositAmount(String name, long cash){
-        for(BankAccount bankAccount : bankAccounts){
-            if(!bankAccount.accountName.equals(name)){
-                continue;
-            }
-            if(bankAccount instanceof SavingAccount){
-                SavingAccount savingAccount = (SavingAccount)bankAccount;
-                savingAccount.setAutoDepositAmount(cash);
-            }
-        }
+        bankAccounts.stream().filter(SavingAccount.class::isInstance)
+                .filter(bankAccount -> bankAccount.accountName.equals(name))
+                .findFirst()
+                .map(SavingAccount.class::cast)
+                .ifPresentOrElse(
+                        acc -> acc.setAutoDepositAmount(cash),
+                        () -> { throw new IllegalArgumentException("해당 이름의 적금 계좌가 없습니다: " + name); }
+                );
     }
 
 }

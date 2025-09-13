@@ -24,11 +24,13 @@ public abstract class BankAccount {
         long remainBalance = balance - cash;
         if(remainBalance>=0){
             balance = remainBalance;
-            member.setCash(member.cash+ cash);
+            member.setCash(member.getCash()+ cash);
             return true;
         }
         return false;
     }
+
+
     public void calculateBalance() {
         balance = (long)(balance*(1+ interestRate/100));
     }

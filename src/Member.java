@@ -1,6 +1,6 @@
 public class Member {
-    String name;
-    long cash=100000L;
+    private String name;
+    private long cash=100000L;
 
     public Member(String name,Long cash){
         this.name=name;
